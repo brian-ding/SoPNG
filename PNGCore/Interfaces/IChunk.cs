@@ -9,7 +9,5 @@ namespace PNGCore.Interfaces
 {
     internal interface IChunk
     {
-        ChunkName Name { get; }
-        int Length { get; }
     }
 }

@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 
 namespace PNGCore.Chunks
 {
-    public abstract class BaseChunk
+    internal abstract class BaseChunk
     {
         protected static ulong[] _crcTable;
+        protected byte[] _data;
+        protected abstract ChunkName Name { get; }
+        protected int Length { get; }
+
+        public BaseChunk(int length)
+        {
+            Length = length;
+            _data = new byte[4 + 4 + Length + 4];
+        }
 
         static BaseChunk()
         {
