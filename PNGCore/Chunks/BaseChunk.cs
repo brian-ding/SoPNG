@@ -14,14 +14,6 @@ namespace PNGCore.Chunks
         protected abstract ChunkName Name { get; }
         protected int Length { get; }
 
-        public BaseChunk(int length)
-        {
-            Length = length;
-            _data = new byte[4 + 4 + Length + 4];
-            BitOperation.Int32ToBytes(Length).CopyTo(_data, 0);
-            Name.FillChunk(_data);
-        }
-
         static BaseChunk()
         {
             _crcTable = new ulong[256];
@@ -43,6 +35,14 @@ namespace PNGCore.Chunks
             }
         }
 
+        public BaseChunk(int length)
+        {
+            Length = length;
+            _data = new byte[4 + 4 + Length + 4];
+            BitOperation.Int32ToBytes(Length).CopyTo(_data, 0);
+            Name.FillChunk(_data);
+        }
+
         protected byte[] GetCRC(byte[] data)
         {
             ulong c = 0xffffffffL;
@@ -53,6 +53,11 @@ namespace PNGCore.Chunks
             c = c ^ 0xffffffffL;
 
             return BitOperation.Int32ToBytes((int)c);
+        }
+
+        public byte[] GetData()
+        {
+            return _data;
         }
     }
 }
