@@ -1,6 +1,6 @@
 ﻿using ICSharpCode.SharpZipLib.Zip.Compression;
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using Ionic.Zlib;
+using PNGCore;
 using System;
 using System.Collections.Generic;
 using System.IO;

@@ -18,6 +18,8 @@ namespace PNGCore.Chunks
         {
             Length = length;
             _data = new byte[4 + 4 + Length + 4];
+            BitOperation.Int32ToBytes(Length).CopyTo(_data, 0);
+            Name.FillChunk(_data);
         }
 
         static BaseChunk()

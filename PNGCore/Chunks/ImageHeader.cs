@@ -15,8 +15,6 @@ namespace PNGCore.Chunks
 
         public ImageHeader(int width, int height, byte depth, byte colorType, byte compression, byte filter, byte interlace) : base(13)
         {
-            BitOperation.Int32ToBytes(Length).CopyTo(_data, 0);
-            Name.FillChunk(_data);
             BitOperation.Int32ToBytes(width).CopyTo(_data, 8);
             BitOperation.Int32ToBytes(height).CopyTo(_data, 12);
             _data[16] = depth;
