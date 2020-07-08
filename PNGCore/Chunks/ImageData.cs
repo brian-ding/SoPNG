@@ -1,4 +1,5 @@
 ﻿using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using Ionic.Zlib;
 using PNGCore.Extensions;
 using PNGCore.Interfaces;
 using System;
@@ -14,16 +15,15 @@ namespace PNGCore.Chunks
     {
         protected override ChunkName Name => new ChunkName(new byte[] { 73, 68, 65, 84 });
 
+        private int _width;
+        private int _height;
+
         public ImageData(int width, int height, byte red, byte green, byte blue) : base(1 + width * height * 3)
         {
-            byte[] buffer = new byte[1 + width * height * 3];
-            buffer[0] = 0;
-            for (int i = 1; i < buffer.Length; i += 3)
-            {
-                buffer[i] = red;
-                buffer[i + 1] = green;
-                buffer[i + 2] = blue;
-            }
+            _width = width;
+            _height = height;
+
+            byte[] buffer = ArrangeRGB(red, green, blue);
             byte[] compressedBuffer = Compress(buffer);
 
             _data = new byte[4 + 4 + compressedBuffer.Length + 4];
@@ -33,49 +33,71 @@ namespace PNGCore.Chunks
             GetCRC(_data.Skip(4).Take(4 + compressedBuffer.Length).ToArray()).CopyTo(_data, 8 + compressedBuffer.Length);
         }
 
-        private byte[] Compress(byte[] data)
+        private byte[] Compress(byte[] buffer)
         {
-            byte[] resBuffer = null;
-
-            MemoryStream mOutStream = new MemoryStream(data.Length);
-            DeflaterOutputStream defStream = new DeflaterOutputStream(mOutStream);
-
-            try
+            using (var ms = new MemoryStream())
             {
-                defStream.Write(data, 0, data.Length);
-                defStream.Flush();
-                defStream.Finish();
+                using (var compressor = new ZlibStream(ms, CompressionMode.Compress, CompressionLevel.BestSpeed))
+                {
+                    compressor.Write(buffer, 0, buffer.Length);
+                }
 
-                resBuffer = mOutStream.ToArray();
-            }
-            finally
-            {
-                defStream.Close();
-                mOutStream.Close();
-            }
+                byte[] data = ms.ToArray();
 
-            return resBuffer;
+                return data;
+            }
         }
 
-        private byte[] Depress(byte[] data)
+        private byte[] Depress(byte[] buffer)
         {
-            //var outputStream = new MemoryStream();
-            //using (var compressedStream = new MemoryStream(data))
-            //using (var inputStream = new InflaterInputStream(compressedStream))
-            //{
-            //    inputStream.CopyTo(outputStream);
-            //    outputStream.Position = 0;
-            //    return outputStream;
-            //}
-
-            var outputStream = new MemoryStream();
-            using (var compressedStream = new MemoryStream(data))
-            using (var inputStream = new InflaterInputStream(compressedStream))
+            using (MemoryStream ms = new System.IO.MemoryStream())
             {
-                inputStream.CopyTo(outputStream);
-                outputStream.Position = 0;
-                return outputStream.ToArray();
+                using (var compressor =
+                       new ZlibStream(ms, CompressionMode.Decompress))
+                {
+                    compressor.Write(buffer, 0, buffer.Length);
+                }
+
+                byte[] data = ms.ToArray();
+
+                return data;
             }
+        }
+
+        private byte[] ArrangeRGB(byte red, byte green, byte blue)
+        {
+            byte[] buffer = new byte[_height + _width * _height * 3];
+            int dataWidth = 3 * _width + 1;
+
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                int x = i % dataWidth;
+                int y = i / dataWidth;
+                if (x == 0)
+                {
+                    // each line's leading byte is 0, if the filtering method is 0
+                    buffer[i] = 0;
+                }
+                else
+                {
+                    switch ((x - 1) % 3)
+                    {
+                        case 0:
+                            buffer[i] = red;
+                            break;
+
+                        case 1:
+                            buffer[i] = green;
+                            break;
+
+                        case 2:
+                            buffer[i] = blue;
+                            break;
+                    }
+                }
+            }
+
+            return buffer;
         }
     }
 }

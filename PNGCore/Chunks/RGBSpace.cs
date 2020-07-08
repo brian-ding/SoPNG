@@ -10,7 +10,7 @@ namespace PNGCore.Chunks
 {
     internal class RGBSpace : BaseChunk, IChunk
     {
-        protected override ChunkName Name => new ChunkName(new byte[] { 73, 72, 68, 82 });
+        protected override ChunkName Name => new ChunkName(new byte[] { 115, 82, 71, 66 });
 
         public RGBSpace(byte renderIntent) : base(1)
         {
