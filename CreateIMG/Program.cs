@@ -1,4 +1,6 @@
-﻿using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+﻿using ICSharpCode.SharpZipLib.Zip.Compression;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using Ionic.Zlib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,25 +26,33 @@ namespace CreateIMG
             //}
 
             // read png bytes
-            byte[] buffer = File.ReadAllBytes(@"C:\Users\Brian\Desktop\1_red.png");
-            var list = GetChunkNames(buffer);
-            //foreach (var name in list)
-            //{
-            //    Console.WriteLine(name);
-            //}
+            //byte[] buffer = File.ReadAllBytes(@"C:\Users\brianding\Desktop\1.png");
+            //var list = GetChunks(buffer);
+
             //byte[] data = new byte[] { 24, 87, 99, 252, 255, 255, 63, 3, 3, 3, 19, 16, 51, 48, 48, 0, 0, 36, 6, 3, 1 };
             //byte[] data = new byte[] { 24, 87, 99, 248, 255, 255, 63, 0, 5, 254, 2, 254 };
-            byte[] data = new byte[] { 24, 87, 99, 120, 43, 163, 2, 0, 3, 39, 1, 46 };
-            var s = ZLibDecompress(data);
-            buffer = new byte[s.Length];
-            s.Read(buffer, 0, buffer.Length);
+            //var s = ZLibDecompress(data);
+            //byte[] buffer = new byte[s.Length];
+            //s.Read(buffer, 0, buffer.Length);
+
+            // before compress
+            //byte[] data = new byte[] { 0, 237, 28, 36 };
+            //Compress(data);
+
+            //// after compress
+            //byte[] data = new byte[] { 24, 87, 99, 120, 43, 163, 2, 0, 3, 39, 1, 46 };
+            byte[] data = new byte[] { 120, 156, 99, 120, 43, 163, 2, 0, 3, 39, 1, 46 };
+            Depress(data);
+
+            //ZLibDecompress(new byte[] { 120, 156, 99, 120, 43, 163, 2, 0, 3, 39, 1, 46 });
+            ZLibDecompress(data);
         }
 
         private static Stream ZLibDecompress(byte[] data)
         {
             var outputStream = new MemoryStream();
             using (var compressedStream = new MemoryStream(data))
-            using (var inputStream = new DeflaterOutputStream(compressedStream))
+            using (var inputStream = new InflaterInputStream(compressedStream))
             {
                 inputStream.CopyTo(outputStream);
                 outputStream.Position = 0;
@@ -50,7 +60,7 @@ namespace CreateIMG
             }
         }
 
-        private static List<string> GetChunkNames(byte[] buffer)
+        private static List<string> GetChunks(byte[] buffer)
         {
             List<string> names = new List<string>();
             int chunkIndex = 8;
@@ -84,6 +94,37 @@ namespace CreateIMG
             _imageBuffer[offset + 2] = redValue;
             // alpha
             _imageBuffer[offset + 3] = 255;
+        }
+
+        private static void Compress(byte[] buffer)
+        {
+            using (var ms = new System.IO.MemoryStream())
+            {
+                using (var compressor =
+                       new Ionic.Zlib.ZlibStream(ms,
+                                                  CompressionMode.Compress,
+                                                  CompressionLevel.BestSpeed))
+                {
+                    compressor.Write(buffer, 0, buffer.Length);
+                }
+
+                byte[] data = ms.ToArray();
+            }
+        }
+
+        private static void Depress(byte[] buffer)
+        {
+            using (var ms = new System.IO.MemoryStream())
+            {
+                using (var compressor =
+                       new Ionic.Zlib.ZlibStream(ms,
+                                                  CompressionMode.Decompress))
+                {
+                    compressor.Write(buffer, 0, buffer.Length);
+                }
+
+                byte[] data = ms.ToArray();
+            }
         }
     }
 }
