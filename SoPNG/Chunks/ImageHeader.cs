@@ -1,5 +1,5 @@
-﻿using PNGCore.Extensions;
-using PNGCore.Interfaces;
+﻿using SoPNG.Extensions;
+using SoPNG.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PNGCore.Chunks
+namespace SoPNG.Chunks
 {
     internal class ImageHeader : BaseChunk, IChunk
     {

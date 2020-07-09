@@ -1,4 +1,4 @@
-﻿using PNGCore.Chunks;
+﻿using SoPNG.Chunks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PNGCore
+namespace SoPNG
 {
     public class Image
     {

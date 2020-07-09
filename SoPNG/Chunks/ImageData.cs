@@ -1,7 +1,7 @@
 ﻿using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 using Ionic.Zlib;
-using PNGCore.Extensions;
-using PNGCore.Interfaces;
+using SoPNG.Extensions;
+using SoPNG.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PNGCore.Chunks
+namespace SoPNG.Chunks
 {
     internal class ImageData : BaseChunk, IChunk
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PNGCore.Extensions
+namespace SoPNG.Extensions
 {
     public static class BitOperation
     {

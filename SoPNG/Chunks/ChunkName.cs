@@ -1,11 +1,11 @@
-﻿using PNGCore.Interfaces;
+﻿using SoPNG.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PNGCore.Chunks
+namespace SoPNG.Chunks
 {
     internal struct ChunkName
     {
