@@ -1,6 +1,4 @@
-﻿using ICSharpCode.SharpZipLib.Zip.Compression;
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using PNGCore;
+﻿using PNGCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,12 +9,12 @@ namespace CreateIMG
     {
         private static void Main(string[] args)
         {
-            Image image = new Image(100, 100, 237, 28, 36);
+            Image image = new Image(1024, 768, 237, 28, 36);
             image.Save(@"C:\Users\Brian\Desktop\test.png");
-            byte[] correct = File.ReadAllBytes(@"C:\Users\Brian\Desktop\1_1.png");
-            byte[] wrong = File.ReadAllBytes(@"C:\Users\Brian\Desktop\test.png");
+            // byte[] correct = File.ReadAllBytes(@"C:\Users\Brian\Desktop\1_1.png");
+            //byte[] wrong = File.ReadAllBytes(@"C:\Users\Brian\Desktop\test.png");
 
-            var list = GetChunks(correct);
+            //var list = GetChunks(correct);
         }
 
         private static List<string> GetChunks(byte[] buffer)

@@ -1,13 +1,10 @@
-﻿using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-using Ionic.Zlib;
+﻿using Ionic.Zlib;
 using PNGCore.Extensions;
 using PNGCore.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PNGCore.Chunks
 {
@@ -50,7 +47,7 @@ namespace PNGCore.Chunks
 
         private byte[] Depress(byte[] buffer)
         {
-            using (MemoryStream ms = new System.IO.MemoryStream())
+            using (MemoryStream ms = new MemoryStream())
             {
                 using (var compressor =
                        new ZlibStream(ms, CompressionMode.Decompress))
@@ -64,40 +61,33 @@ namespace PNGCore.Chunks
             }
         }
 
+        private Random random = new Random();
+
         private byte[] ArrangeRGB(byte red, byte green, byte blue)
         {
-            byte[] buffer = new byte[_height + _width * _height * 3];
-            int dataWidth = 3 * _width + 1;
-
-            for (int i = 0; i < buffer.Length; i++)
+            List<byte> buffer = new List<byte>();
+            for (int y = 0; y < _height; y++)
             {
-                int x = i % dataWidth;
-                int y = i / dataWidth;
-                if (x == 0)
+                buffer.Add(0);
+                for (int x = 0; x < _width; x++)
                 {
-                    // each line's leading byte is 0, if the filtering method is 0
-                    buffer[i] = 0;
-                }
-                else
-                {
-                    switch ((x - 1) % 3)
+                    if ((x > 200 && _width - x > 200)
+                        && (y > 100 && _height - y > 100))
                     {
-                        case 0:
-                            buffer[i] = red;
-                            break;
-
-                        case 1:
-                            buffer[i] = green;
-                            break;
-
-                        case 2:
-                            buffer[i] = blue;
-                            break;
+                        buffer.Add(0);
+                        buffer.Add(0);
+                        buffer.Add(0);
+                    }
+                    else
+                    {
+                        buffer.Add(red);
+                        buffer.Add(green);
+                        buffer.Add(blue);
                     }
                 }
             }
 
-            return buffer;
+            return buffer.ToArray();
         }
     }
 }
