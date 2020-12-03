@@ -20,7 +20,13 @@ namespace PNGCore.Chunks
             _width = width;
             _height = height;
 
-            byte[] buffer = ArrangeRGB(red, green, blue);
+            byte[] buffer = new ImageBuffer(_width, _height)
+                                .SetBackgroundColor(red, green, blue)
+                                // 38 98 208
+                                .DrawRectangle(0, 0, 1024, 768, 38, 98, 208)
+                                .DrawLine(100, 100, 500, 500, x => { return x / 2; }, 57, 14, 7, 1)
+                                .DrawLine(0, 0, 1024, 768, x => { return x * x / 1000; }, 57, 14, 7, 2)
+                                .ToArray();
             byte[] compressedBuffer = Compress(buffer);
 
             _data = new byte[4 + 4 + compressedBuffer.Length + 4];
@@ -60,8 +66,6 @@ namespace PNGCore.Chunks
                 return data;
             }
         }
-
-        private Random random = new Random();
 
         private byte[] ArrangeRGB(byte red, byte green, byte blue)
         {
